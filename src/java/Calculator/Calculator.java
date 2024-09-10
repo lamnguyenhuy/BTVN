@@ -57,13 +57,7 @@ public class Calculator extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int a = Integer.parseInt(request.getParameter("a"));
-        int b = Integer.parseInt(request.getParameter("b"));
-        String op = request.getParameter("operator");
-        response.getWriter().print(a);
-        response.getWriter().print(b);
-        response.getWriter().print(op);
-
+        doPost(request, response);
     }
 
     /**
@@ -77,40 +71,58 @@ public class Calculator extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String aValue = request.getParameter("a");
-        String bValue = request.getParameter("b");
-        double a, b;
-        String op = request.getParameter("operator");
-        double result;
-        String s;
-        try {
-            a = Double.parseDouble(aValue);
-            b = Double.parseDouble(bValue);
-            switch (op) {
-                case "add":
-                    s = "+";
-                    result = a + b;
-                    break;
-                case "sub":
-                    s = "-";
-                    result = a - b;
-                    break;
-                case "mul":
-                    s = "*";
-                    result = a * b;
-                    break;
-                case "div":
-                    s = "/";
-                    result = a / b;
-                    break;
-                default:
-                    throw new AssertionError();
-            }
-            response.getWriter().print(a + " " + s + " " + b + " = " + result);
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet Calculator</title>");
+            out.println("</head>");
+            out.println("<body style='background-color: lightblue'>");
+            String aValue = request.getParameter("a");
+            String bValue = request.getParameter("b");
+            double a, b;
+            String op = request.getParameter("operator");
+            double result;
+            String s;
 
-        } catch (NumberFormatException e) {
-            response.getWriter().print("<h1>Input must be digit.</h1>");
+            try {
+                a = Double.parseDouble(aValue);
+                b = Double.parseDouble(bValue);
+                if (op.equals("div") && b == 0) {
+                    response.getWriter().print("<h1 style='color:red'>B must difference from 0</h1>");
+                } else {
+                    switch (op) {
+                        case "add":
+                            s = "+";
+                            result = a + b;
+                            break;
+                        case "sub":
+                            s = "-";
+                            result = a - b;
+                            break;
+                        case "mul":
+                            s = "*";
+                            result = a * b;
+                            break;
+                        case "div":
+                            s = "/";
+
+                            result = a / b;
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                    response.getWriter().print("<h1>"+a + " " + s + " " + b + " = " + result+"</h1>");
+                }
+            } catch (NumberFormatException e) {
+                response.getWriter().print("<h1 style='color:red'>Input must be digit.</h1>");
+            }
+            out.println("</body>");
+            out.println("</html>");
         }
+
     }
 
     /**
